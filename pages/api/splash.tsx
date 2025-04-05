@@ -8,10 +8,6 @@ export const config = {
 
 export default async function handler(req: NextRequest) {
   try {
-    const fontData = await fetch(
-      new URL('../../public/fonts/Minecraftia-Regular.ttf', import.meta.url)
-    ).then((res) => res.arrayBuffer());
-
     return new ImageResponse(
       (
         <div
@@ -23,7 +19,7 @@ export default async function handler(req: NextRequest) {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#1a1c2c',
-            fontFamily: 'Minecraftia',
+            fontFamily: 'system-ui',
           }}
         >
           {/* Background Grid */}
@@ -46,6 +42,8 @@ export default async function handler(req: NextRequest) {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '32px',
+              position: 'relative',
+              zIndex: 1,
             }}
           >
             <h1
@@ -56,6 +54,7 @@ export default async function handler(req: NextRequest) {
                 margin: 0,
                 lineHeight: 1,
                 textShadow: '5px 5px 0 #ff5252, -5px -5px 0 #209CEE',
+                fontWeight: 'bold',
               }}
             >
               CRYPTO
@@ -70,6 +69,7 @@ export default async function handler(req: NextRequest) {
                 textAlign: 'center',
                 textShadow: '4px 4px 0 #209CEE, -4px -4px 0 #ff5252',
                 textTransform: 'uppercase',
+                fontWeight: 'bold',
               }}
             >
               🎮 Play & Earn
@@ -104,13 +104,6 @@ export default async function handler(req: NextRequest) {
       {
         width: 1200,
         height: 800,
-        fonts: [
-          {
-            name: 'Minecraftia',
-            data: fontData,
-            style: 'normal',
-          },
-        ],
       }
     );
   } catch (e: any) {
