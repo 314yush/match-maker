@@ -50,7 +50,7 @@ function App() {
               theme: 'light',
               accentColor: '#FF8B8B',
               showWalletLoginFirst: false,
-              walletList: ['rabby_wallet','detected_wallets','wallet_connect'],
+              walletList: ['detected_wallets','wallet_connect'],
             }
           }}
         >

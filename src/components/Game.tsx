@@ -655,9 +655,14 @@ const Game = () => {
   };
 
   // Add shareToWarpcast function
-  const shareToWarpcast = (message: string) => {
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://warpcast.com/~/compose?text=${encodedMessage}`, '_blank');
+  const shareToWarpcast = () => {
+    const encodedMessage = encodeURIComponent(`🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now!`);
+    // Check if user is on mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const url = isMobile 
+      ? `warpcast://compose?text=${encodedMessage}`
+      : `https://warpcast.com/~/compose?text=${encodedMessage}`;
+    window.open(url, '_blank');
   };
 
   // Update GameOverDialog component
@@ -674,7 +679,7 @@ const Game = () => {
         <div className="game-over-buttons">
           <button 
             className="nes-btn is-primary" 
-            onClick={() => shareToWarpcast(`🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now!`)}
+            onClick={shareToWarpcast}
             style={{ marginBottom: '1rem' }}
           >
             Share on Warpcast
@@ -823,7 +828,7 @@ const Game = () => {
                 <div className="dialog-buttons">
                   <button
                     className="nes-btn is-primary"
-                    onClick={() => shareToWarpcast(`🤔 TIL in Crypto Match:\n\nTried to match:\n${selectedTerm} → ${wrongMatch}\n\nCorrect match was:\n${selectedTerm} → ${correctAnswer}\n\nCurrent Score: ${score}\n\nLearn crypto terms while playing!`)}
+                    onClick={shareToWarpcast}
                   >
                     Share on Warpcast
                   </button>
