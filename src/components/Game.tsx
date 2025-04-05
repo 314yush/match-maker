@@ -656,7 +656,8 @@ const Game = () => {
 
   // Add shareToWarpcast function
   const shareToWarpcast = () => {
-    const encodedMessage = encodeURIComponent(`🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now!`);
+    const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now!`;
+    const encodedMessage = encodeURIComponent(message);
     // Check if user is on mobile
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const url = isMobile 
