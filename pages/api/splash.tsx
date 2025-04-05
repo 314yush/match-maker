@@ -24,56 +24,33 @@ export default async function handler(req: NextRequest) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#2c2137',
             fontFamily: '"Press Start 2P"',
-            backgroundImage: `
-              linear-gradient(45deg, #3f3544 25%, transparent 25%),
-              linear-gradient(-45deg, #3f3544 25%, transparent 25%),
-              linear-gradient(45deg, transparent 75%, #3f3544 75%),
-              linear-gradient(-45deg, transparent 75%, #3f3544 75%)
-            `,
-            backgroundSize: '32px 32px',
-            backgroundPosition: '0 0, 0 16px, 16px -16px, -16px 0px',
+            background: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))',
+            position: 'relative',
           }}
         >
-          {/* Pixelated Border */}
+          {/* Semi-transparent overlay container */}
           <div
             style={{
-              position: 'absolute',
-              top: '20px',
-              left: '20px',
-              right: '20px',
-              bottom: '20px',
-              border: '8px solid #92cc41',
-              boxShadow: `
-                0 0 0 8px #209cee,
-                0 0 0 16px #e76e55
-              `,
-            }}
-          />
-
-          <div
-            style={{
+              background: 'rgba(0,0,0,0.7)',
+              padding: '40px',
+              borderRadius: '20px',
+              border: '4px solid #92cc41',
+              boxShadow: '0 0 0 4px #209cee, 0 0 0 8px #e76e55',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '40px',
-              padding: '60px',
-              position: 'relative',
+              gap: '30px',
             }}
           >
             <h1
               style={{
-                fontSize: 100,
-                color: '#e76e55',
+                fontSize: 80,
+                color: '#ffffff',
                 textAlign: 'center',
                 margin: 0,
                 lineHeight: 1.2,
-                textShadow: `
-                  4px 4px 0 #209cee,
-                  8px 8px 0 #2c2137
-                `,
-                WebkitTextStroke: '2px #2c2137',
+                textShadow: '4px 4px 0 #e76e55',
               }}
             >
               CRYPTO
@@ -83,14 +60,14 @@ export default async function handler(req: NextRequest) {
             
             <div
               style={{
-                fontSize: 32,
+                fontSize: 28,
                 color: '#92cc41',
                 textAlign: 'center',
                 lineHeight: 1.5,
-                textShadow: '4px 4px #2c2137',
-                padding: '20px',
-                border: '4px solid #92cc41',
-                backgroundColor: '#2c2137',
+                textShadow: '2px 2px #000000',
+                padding: '15px',
+                border: '2px solid #92cc41',
+                background: 'rgba(0,0,0,0.5)',
               }}
             >
               🎮 Play & Earn
@@ -101,18 +78,19 @@ export default async function handler(req: NextRequest) {
             <div
               style={{
                 background: '#e76e55',
-                padding: '4px',
+                padding: '3px',
               }}
             >
               <div
                 style={{
                   background: '#92cc41',
-                  padding: '24px 48px',
-                  fontSize: 40,
-                  color: '#2c2137',
+                  padding: '20px 40px',
+                  fontSize: 32,
+                  color: '#ffffff',
                   fontWeight: 'bold',
                   textTransform: 'uppercase',
-                  border: '4px solid #2c2137',
+                  border: '2px solid #000000',
+                  textShadow: '2px 2px #000000',
                 }}
               >
                 Play Now
@@ -120,41 +98,53 @@ export default async function handler(req: NextRequest) {
             </div>
           </div>
 
-          {/* Pixel Art Crypto Symbols */}
+          {/* Crypto Symbols with better visibility */}
           <div style={{
             position: 'absolute',
-            top: '15%',
-            left: '10%',
-            fontSize: 64,
-            color: '#e76e55',
-            textShadow: '4px 4px #2c2137',
+            top: '10%',
+            left: '5%',
+            fontSize: 48,
+            color: '#ffffff',
+            textShadow: '2px 2px #000000',
+            background: 'rgba(0,0,0,0.5)',
+            padding: '10px',
+            borderRadius: '10px',
             transform: 'rotate(-15deg)',
           }}>₿</div>
           <div style={{
             position: 'absolute',
-            top: '25%',
-            right: '15%',
-            fontSize: 64,
-            color: '#209cee',
-            textShadow: '4px 4px #2c2137',
+            top: '20%',
+            right: '5%',
+            fontSize: 48,
+            color: '#ffffff',
+            textShadow: '2px 2px #000000',
+            background: 'rgba(0,0,0,0.5)',
+            padding: '10px',
+            borderRadius: '10px',
             transform: 'rotate(15deg)',
           }}>Ξ</div>
           <div style={{
             position: 'absolute',
-            bottom: '25%',
-            left: '20%',
-            fontSize: 64,
-            color: '#92cc41',
-            textShadow: '4px 4px #2c2137',
+            bottom: '20%',
+            left: '10%',
+            fontSize: 48,
+            color: '#ffffff',
+            textShadow: '2px 2px #000000',
+            background: 'rgba(0,0,0,0.5)',
+            padding: '10px',
+            borderRadius: '10px',
             transform: 'rotate(-10deg)',
           }}>◎</div>
           <div style={{
             position: 'absolute',
-            bottom: '35%',
-            right: '10%',
-            fontSize: 64,
-            color: '#e76e55',
-            textShadow: '4px 4px #2c2137',
+            bottom: '30%',
+            right: '5%',
+            fontSize: 48,
+            color: '#ffffff',
+            textShadow: '2px 2px #000000',
+            background: 'rgba(0,0,0,0.5)',
+            padding: '10px',
+            borderRadius: '10px',
             transform: 'rotate(10deg)',
           }}>₳</div>
         </div>
