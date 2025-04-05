@@ -1,14 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Crypto Match</title>
-    <meta property="og:title" content="Crypto Match" />
-    <meta property="og:image" content="https://match-maker-na96brycu-314yushs-projects.vercel.app/api/frame/success" />
-    <meta property="fc:frame" content="vNext" />
-    <meta property="fc:frame:image" content="https://match-maker-na96brycu-314yushs-projects.vercel.app/api/frame/success" />
-    <meta property="fc:frame:post_url" content="https://match-maker-na96brycu-314yushs-projects.vercel.app/api/frame/success" />
+    <meta charset="UTF-8">
+    <title>Crypto Match - Test Your Crypto Knowledge!</title>
+    
+    <!-- Standard Meta Tags -->
+    <meta name="description" content="Match crypto pairs in this retro-style game on Farcaster. Test your crypto knowledge and compete on the leaderboard!" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Farcaster Frame Meta Tags -->
+    <meta name="fc:frame" content='{
+        "version": "next",
+        "imageUrl": "https://match-maker-na96brycu-314yushs-projects.vercel.app/api/frame/leaderboard",
+        "buttons": [
+            {
+                "label": "🎮 Play Now",
+                "action": "post_redirect",
+                "target": "https://match-maker-na96brycu-314yushs-projects.vercel.app/play"
+            },
+            {
+                "label": "🏆 View Leaderboard",
+                "action": "post_redirect",
+                "target": "https://match-maker-na96brycu-314yushs-projects.vercel.app/leaderboard"
+            }
+        ],
+        "postUrl": "https://match-maker-na96brycu-314yushs-projects.vercel.app/api/frame/action"
+    }' />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Crypto Match - Test Your Crypto Knowledge!" />
+    <meta property="og:description" content="Match crypto pairs in this retro-style game on Farcaster. Test your crypto knowledge and compete on the leaderboard!" />
+    <meta property="og:image" content="https://match-maker-na96brycu-314yushs-projects.vercel.app/api/frame/leaderboard" />
+    <meta property="og:url" content="https://match-maker-na96brycu-314yushs-projects.vercel.app" />
+    <meta property="og:type" content="website" />
 </head>
 <body>
     <h1>Crypto Match</h1>
+    <p>A retro-style crypto matching game on Farcaster</p>
 </body>
 </html> 

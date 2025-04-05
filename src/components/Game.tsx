@@ -97,6 +97,8 @@ const Game = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSaveScore, setShowSaveScore] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<string>('');
+  const [selectedTerm, setSelectedTerm] = useState<string>('');
+  const [wrongMatch, setWrongMatch] = useState<string>('');
   const [highestScore, setHighestScore] = useState(0);
   const [showToast, setShowToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showTip, setShowTip] = useState(false);
@@ -560,16 +562,20 @@ const Game = () => {
       (firstCard.type === 'definition' && pair.definition === firstCard.text)
     );
     
-    const correct = firstCard.type === 'term' ? correctPair?.definition : correctPair?.term;
+    // Determine which card is the term and which is the wrong match
+    const term = firstCard.type === 'term' ? firstCard.text : clickedCard.text;
+    const wrong = firstCard.type === 'term' ? clickedCard.text : firstCard.text;
+    const correctMatch = firstCard.type === 'term' ? correctPair?.definition : correctPair?.term;
 
     setShowSaveScore(false);
-    setCorrectAnswer('');
+    setCorrectAnswer(correctMatch || '');
+    setSelectedTerm(term);
+    setWrongMatch(wrong);
     
     // Trigger screen shake
     triggerScreenShake();
     
     setTimeout(() => {
-      setCorrectAnswer(correct || '');
       updatedCards[selectedCards[0]].isIncorrect = true;
       updatedCards[cards.indexOf(clickedCard)].isIncorrect = true;
       setCards(updatedCards);
@@ -648,7 +654,13 @@ const Game = () => {
     }, 200);
   };
 
-  // Add GameOverDialog component
+  // Add shareToWarpcast function
+  const shareToWarpcast = (message: string) => {
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://warpcast.com/~/compose?text=${encodedMessage}`, '_blank');
+  };
+
+  // Update GameOverDialog component
   const GameOverDialog = () => (
     <div className="modal-overlay">
       <div className="nes-container is-rounded game-over-dialog">
@@ -660,6 +672,13 @@ const Game = () => {
           <p>Sets Completed: <span className="nes-text is-primary">{currentSet}</span></p>
         </div>
         <div className="game-over-buttons">
+          <button 
+            className="nes-btn is-primary" 
+            onClick={() => shareToWarpcast(`🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now!`)}
+            style={{ marginBottom: '1rem' }}
+          >
+            Share on Warpcast
+          </button>
           <button className="nes-btn is-primary" onClick={handleRestartGame}>
             Play Again
           </button>
@@ -782,19 +801,39 @@ const Game = () => {
         {/* Error Dialog */}
         {showSaveScore && (
           <div className="modal-overlay">
-            <div className="nes-container is-rounded with-title error-dialog">
+            <div className="nes-container is-rounded error-dialog">
               <p className="title">Wrong Match!</p>
               <div className="dialog-content">
+                <div className="score-box">
+                  <span className="nes-text is-primary">Score: {score}</span>
+                  <span className="nes-text is-success">Best: {highestScore}</span>
+                </div>
+                <p>You matched:</p>
+                <div className="match-box">
+                  <span className="term">{selectedTerm}</span>
+                  <span className="arrow">↓</span>
+                  <span className="definition wrong">{wrongMatch}</span>
+                </div>
                 <p>The correct match was:</p>
-                <p className="nes-text is-primary">
-                  {cards[selectedCards[0]]?.text} → {correctAnswer}
-                </p>
-                <button
-                  className="nes-btn is-error"
-                  onClick={handleRestartSet}
-                >
-                  Restart Set
-                </button>
+                <div className="match-box">
+                  <span className="term">{selectedTerm}</span>
+                  <span className="arrow">↓</span>
+                  <span className="definition">{correctAnswer}</span>
+                </div>
+                <div className="dialog-buttons">
+                  <button
+                    className="nes-btn is-primary"
+                    onClick={() => shareToWarpcast(`🤔 TIL in Crypto Match:\n\nTried to match:\n${selectedTerm} → ${wrongMatch}\n\nCorrect match was:\n${selectedTerm} → ${correctAnswer}\n\nCurrent Score: ${score}\n\nLearn crypto terms while playing!`)}
+                  >
+                    Share on Warpcast
+                  </button>
+                  <button
+                    className="nes-btn is-error"
+                    onClick={handleRestartSet}
+                  >
+                    Restart Set
+                  </button>
+                </div>
               </div>
             </div>
           </div>
