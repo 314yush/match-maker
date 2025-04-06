@@ -9,6 +9,8 @@ import type { GameMode } from '../data/gameModes';
 import 'nes.css/css/nes.min.css';
 import './Game.css';
 import WelcomeScreen from './WelcomeScreen';
+import { useLoginToFrame } from '@privy-io/react-auth/farcaster';
+import frameSdk from '@farcaster/frame-sdk';
 
 const TIMER_DURATION = 60;
 
@@ -92,7 +94,8 @@ const ModeIntroDialog = React.memo(({
 });
 
 const Game = () => {
-  const { user, authenticated, login } = usePrivy();
+  const { ready, authenticated, user, login } = usePrivy();
+  const { initLoginToFrame, loginToFrame } = useLoginToFrame();
   const { updateStats, stats } = usePlayerStats();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSaveScore, setShowSaveScore] = useState(false);
@@ -138,13 +141,13 @@ const Game = () => {
   // Start game automatically when user logs in - with better control over multiple renders
   useEffect(() => {
     // Only run on first authentication with stricter conditions
-    if (authenticated && !gameStarted && !showDialog && currentSet === 0 && !isTransitioning.current) {
+    if (ready && !authenticated && !gameStarted && !showDialog && currentSet === 0 && !isTransitioning.current) {
       // Add a timeout to avoid render conflicts with other effects
       setTimeout(() => {
         prepareGame();
       }, 50);
     }
-  }, [authenticated]); // Only depend on authentication changes
+  }, [ready, authenticated]); // Only depend on authentication changes
 
   // Update stats when score changes
   useEffect(() => {
@@ -696,6 +699,28 @@ const Game = () => {
   const handlePlay = () => {
     login();  // Use Privy's login method
   };
+
+  // Login to Frame with Privy automatically
+  useEffect(() => {
+    if (ready && !authenticated) {
+      const loginToFarcaster = async () => {
+        try {
+          // Initialize a new login attempt to get a nonce for the Farcaster wallet to sign
+          const { nonce } = await initLoginToFrame();
+          // Request a signature from Warpcast
+          const result = await frameSdk.actions.signIn({ nonce: nonce });
+          // Send the received signature from Warpcast to Privy for authentication
+          await loginToFrame({
+            message: result.message,
+            signature: result.signature,
+          });
+        } catch (error) {
+          console.error('Error logging in with Farcaster:', error);
+        }
+      };
+      loginToFarcaster();
+    }
+  }, [ready, authenticated, initLoginToFrame, loginToFrame]);
 
   if (!authenticated) {
     return <WelcomeScreen onPlay={handlePlay} />;
