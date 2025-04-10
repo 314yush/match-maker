@@ -658,28 +658,30 @@ const Game = () => {
   };
 
   // Add shareToWarpcast function
-  const shareToWarpcast = () => {
-    const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now! https://match-maker-lemon.vercel.app/frame.html`;
-    const encodedMessage = encodeURIComponent(message);
-    
-    // Check if user is on mobile
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Create a temporary link element
-    const link = document.createElement('a');
-    
-    if (isMobile) {
-      // For mobile, try both URL schemes
-      const warpcastUrl = `warpcast://compose?text=${encodedMessage}`;
-      const fallbackUrl = `https://warpcast.com/~/compose?text=${encodedMessage}`;
+  const shareToWarpcast = async () => {
+    try {
+      // Create the frame URL with proper query parameters
+      const frameUrl = new URL('https://match-maker-lemon.vercel.app/frame.html');
+      frameUrl.searchParams.set('score', score.toString());
+      frameUrl.searchParams.set('best', highestScore.toString());
+      frameUrl.searchParams.set('xp', (stats?.xp || 0).toString());
+      frameUrl.searchParams.set('sets', currentSet.toString());
       
-      // Set up the link
-      link.href = warpcastUrl;
-      link.target = '_blank';
+      // Create the message with the frame URL
+      const message = `I just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score?`;
       
-      // Add click event listener to handle fallback
-      link.onclick = (e) => {
-        e.preventDefault();
+      // Check if user is on mobile
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      // Create the share URL with proper frame embedding
+      const encodedMessage = encodeURIComponent(message);
+      const encodedFrameUrl = encodeURIComponent(frameUrl.toString());
+      
+      if (isMobile) {
+        // For mobile, try both URL schemes with frame URL
+        const warpcastUrl = `warpcast://compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
+        const fallbackUrl = `https://warpcast.com/~/compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
+        
         // Try opening Warpcast app
         window.location.href = warpcastUrl;
         
@@ -687,17 +689,14 @@ const Game = () => {
         setTimeout(() => {
           window.location.href = fallbackUrl;
         }, 1000);
-      };
-    } else {
-      // For desktop, just use the web URL
-      link.href = `https://warpcast.com/~/compose?text=${encodedMessage}`;
-      link.target = '_blank';
+      } else {
+        // For desktop, use the web URL with frame URL
+        window.location.href = `https://warpcast.com/~/compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
+      }
+    } catch (error) {
+      console.error('Error sharing to Warpcast:', error);
+      showMessage('Failed to share score. Please try again.', 'error');
     }
-    
-    // Trigger the click
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   // Update GameOverDialog component
