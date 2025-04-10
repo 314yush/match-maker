@@ -670,12 +670,13 @@ const Game = () => {
       // Create the message with the frame URL
       const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score?`;
 
-      // Use Frame SDK to compose a cast
-      await frameSdk.actions.composeCast({
-        text: message,
-        embeds: [frameUrl.toString()],
-        close: true
-      });
+      // Create the Warpcast compose URL
+      const warpcastUrl = new URL('https://warpcast.com/~/compose');
+      warpcastUrl.searchParams.set('text', message);
+      warpcastUrl.searchParams.set('embeds[]', frameUrl.toString());
+
+      // Use Frame SDK to open the Warpcast compose URL
+      await frameSdk.actions.openUrl(warpcastUrl.toString());
     } catch (error) {
       console.error('Error sharing to Warpcast:', error);
       showMessage('Failed to share score. Please try again.', 'error');
