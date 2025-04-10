@@ -669,16 +669,12 @@ const Game = () => {
       
       // Create the message with the frame URL
       const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score?`;
-      
-      // Create the share URL with proper frame embedding
-      const encodedMessage = encodeURIComponent(message);
-      const encodedFrameUrl = encodeURIComponent(frameUrl.toString());
-      
-      // Use the same URL format for both mobile and desktop
-      const shareUrl = `https://warpcast.com/~/compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
-      
-      // Open in new tab/window
-      window.open(shareUrl, '_blank');
+
+      // Use Frame SDK to compose a cast
+      await frameSdk.actions.composeCast({
+        text: message,
+        embeds: [frameUrl.toString()]
+      });
     } catch (error) {
       console.error('Error sharing to Warpcast:', error);
       showMessage('Failed to share score. Please try again.', 'error');
