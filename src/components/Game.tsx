@@ -673,7 +673,8 @@ const Game = () => {
       // Use Frame SDK to compose a cast
       await frameSdk.actions.composeCast({
         text: message,
-        embeds: [frameUrl.toString()]
+        embeds: [frameUrl.toString()],
+        close: true
       });
     } catch (error) {
       console.error('Error sharing to Warpcast:', error);
