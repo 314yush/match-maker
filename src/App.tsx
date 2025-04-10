@@ -30,7 +30,7 @@ function App() {
         <PrivyProvider
           appId={import.meta.env.VITE_PRIVY_APP_ID}
           config={{
-            loginMethods: ['farcaster', 'email', 'wallet'],
+            loginMethods: ['email', 'wallet'],
             defaultChain: {
               id: 8453,  // Base Mainnet
               name: 'Base',
