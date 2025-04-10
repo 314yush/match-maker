@@ -140,8 +140,8 @@ const Game = () => {
 
   // Start game automatically when user logs in - with better control over multiple renders
   useEffect(() => {
-    // Only run on first authentication with stricter conditions
-    if (ready && !authenticated && !gameStarted && !showDialog && currentSet === 0 && !isTransitioning.current) {
+    // Initialize game for both new and returning authenticated users
+    if (ready && authenticated && !gameStarted && !showDialog && currentSet === 0 && !isTransitioning.current) {
       // Add a timeout to avoid render conflicts with other effects
       setTimeout(() => {
         prepareGame();
@@ -659,14 +659,45 @@ const Game = () => {
 
   // Add shareToWarpcast function
   const shareToWarpcast = () => {
-    const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now! https://match-maker-lemon.vercel.app/play`;
+    const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score? Play now! https://match-maker-lemon.vercel.app/frame.html`;
     const encodedMessage = encodeURIComponent(message);
+    
     // Check if user is on mobile
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const url = isMobile 
-      ? `warpcast://compose?text=${encodedMessage}`
-      : `https://warpcast.com/~/compose?text=${encodedMessage}`;
-    window.open(url, '_blank');
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    
+    if (isMobile) {
+      // For mobile, try both URL schemes
+      const warpcastUrl = `warpcast://compose?text=${encodedMessage}`;
+      const fallbackUrl = `https://warpcast.com/~/compose?text=${encodedMessage}`;
+      
+      // Set up the link
+      link.href = warpcastUrl;
+      link.target = '_blank';
+      
+      // Add click event listener to handle fallback
+      link.onclick = (e) => {
+        e.preventDefault();
+        // Try opening Warpcast app
+        window.location.href = warpcastUrl;
+        
+        // If Warpcast app is not installed, fallback to web after a short delay
+        setTimeout(() => {
+          window.location.href = fallbackUrl;
+        }, 1000);
+      };
+    } else {
+      // For desktop, just use the web URL
+      link.href = `https://warpcast.com/~/compose?text=${encodedMessage}`;
+      link.target = '_blank';
+    }
+    
+    // Trigger the click
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Update GameOverDialog component
