@@ -18,13 +18,23 @@ const Leaderboard = () => {
   const { getLeaderboard } = usePlayerStats();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userPosition, setUserPosition] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         const data = await getLeaderboard();
         if (data) {
-          setEntries(data as LeaderboardEntry[]);
+          const allEntries = data as LeaderboardEntry[];
+          
+          // Find user's position in the full leaderboard
+          if (user?.wallet?.address) {
+            const position = allEntries.findIndex(entry => entry.wallet_address === user?.wallet?.address);
+            setUserPosition(position !== -1 ? position + 1 : null);
+          }
+
+          // Only keep top 10 entries for display
+          setEntries(allEntries);
         }
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
@@ -34,7 +44,7 @@ const Leaderboard = () => {
     };
 
     fetchLeaderboard();
-  }, [getLeaderboard]);
+  }, [getLeaderboard, user?.wallet?.address]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -52,6 +62,27 @@ const Leaderboard = () => {
     if (entry.ens_name) return entry.ens_name;
     if (entry.email) return formatEmail(entry.email);
     return formatAddress(entry.wallet_address);
+  };
+
+  // Get entries to display: top 10 and user's position if not in top 10
+  const getDisplayEntries = () => {
+    const top10 = entries.slice(0, 10);
+    
+    if (!user?.wallet?.address || userPosition === null || userPosition <= 10) {
+      return top10;
+    }
+
+    // Add a separator and the user's position
+    const userEntry = entries[userPosition - 1];
+    return [
+      ...top10,
+      { // Separator entry
+        wallet_address: 'separator',
+        score: -1,
+        xp: -1
+      } as LeaderboardEntry,
+      userEntry
+    ];
   };
 
   return (
@@ -80,16 +111,32 @@ const Leaderboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map((entry, index) => (
-                    <tr key={entry.wallet_address}>
-                      <td className="rank-column nes-text is-primary">{index + 1}</td>
-                      <td className={`player-column ${entry.wallet_address === user?.wallet?.address ? 'nes-text is-success' : ''}`}>
-                        <span className="wallet-address">{getDisplayName(entry)}</span>
-                      </td>
-                      <td className="score-column nes-text is-primary">{entry.score}</td>
-                      <td className="xp-column nes-text is-warning">{entry.xp}</td>
-                    </tr>
-                  ))}
+                  {getDisplayEntries().map((entry, index) => {
+                    if (entry.wallet_address === 'separator') {
+                      return (
+                        <tr key="separator" className="separator-row">
+                          <td colSpan={4} className="separator-cell">...</td>
+                        </tr>
+                      );
+                    }
+
+                    // Use actual position for user entry when below top 10
+                    const displayPosition = userPosition && index >= 10 ? userPosition : index + 1;
+
+                    return (
+                      <tr 
+                        key={entry.wallet_address}
+                        className={entry.wallet_address === user?.wallet?.address ? 'current-user-row' : ''}
+                      >
+                        <td className="rank-column nes-text is-primary">{displayPosition}</td>
+                        <td className={`player-column ${entry.wallet_address === user?.wallet?.address ? 'nes-text is-success' : ''}`}>
+                          <span className="wallet-address">{getDisplayName(entry)}</span>
+                        </td>
+                        <td className="score-column nes-text is-primary">{entry.score}</td>
+                        <td className="xp-column nes-text is-warning">{entry.xp}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -250,4 +250,40 @@
     padding: 0.2rem 0.4rem;
     max-width: 100px;
   }
+}
+
+/* New styles for separator and current user */
+.separator-row {
+  text-align: center;
+  background-color: transparent !important;
+}
+
+.separator-cell {
+  padding: 0.5rem !important;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.current-user-row {
+  background-color: rgba(92, 207, 230, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .leaderboard-container {
+    padding: 10px;
+  }
+
+  .rank-column {
+    width: 40px;
+  }
+
+  .score-column,
+  .xp-column {
+    width: 70px;
+  }
+
+  .wallet-address {
+    font-size: 0.9em;
+  }
 } 
