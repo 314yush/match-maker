@@ -178,12 +178,18 @@ export function usePlayerStats() {
   }, [user?.wallet?.address]);
 
   // Get leaderboard data
-  const getLeaderboard = useCallback(async () => {
-    const { data, error } = await supabase
+  const getLeaderboard = useCallback(async (fetchAll: boolean = false) => {
+    let query = supabase
       .from('leaderboard')
       .select('wallet_address, email, ens_name, farcaster_username, score, xp')
-      .order('score', { ascending: false })
-      .limit(10);
+      .order('score', { ascending: false });
+
+    // Only limit to top 10 if not fetching all
+    if (!fetchAll) {
+      query = query.limit(10);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching leaderboard:', error);

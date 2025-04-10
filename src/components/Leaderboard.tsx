@@ -11,6 +11,7 @@ interface LeaderboardEntry {
   farcaster_username?: string;
   score: number;
   xp: number;
+  position?: number;
 }
 
 const Leaderboard = () => {
@@ -23,18 +24,23 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const data = await getLeaderboard();
-        if (data) {
-          const allEntries = data as LeaderboardEntry[];
-          
+        // Fetch all entries to find user's position
+        const allData = await getLeaderboard(true);
+        // Fetch top 10 for display
+        const topData = await getLeaderboard(false);
+        
+        if (allData && topData) {
           // Find user's position in the full leaderboard
           if (user?.wallet?.address) {
-            const position = allEntries.findIndex(entry => entry.wallet_address === user?.wallet?.address);
+            const position = allData.findIndex(entry => entry.wallet_address === user?.wallet?.address);
+            console.log('User position:', position + 1); // Debug log
+            console.log('User wallet:', user.wallet.address); // Debug log
+            console.log('Found entry:', allData[position]); // Debug log
             setUserPosition(position !== -1 ? position + 1 : null);
           }
 
-          // Only keep top 10 entries for display
-          setEntries(allEntries);
+          // Store top 10 entries for display
+          setEntries(allData);
         }
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
@@ -68,7 +74,12 @@ const Leaderboard = () => {
   const getDisplayEntries = () => {
     const top10 = entries.slice(0, 10);
     
-    // If no user is logged in or user is in top 10, just show top 10
+    // Debug logs
+    console.log('Current user position:', userPosition);
+    console.log('User wallet:', user?.wallet?.address);
+    console.log('Total entries:', entries.length);
+    
+    // If no user is logged in or no position found, just show top 10
     if (!user?.wallet?.address || userPosition === null) {
       return top10;
     }
@@ -78,12 +89,16 @@ const Leaderboard = () => {
       return top10;
     }
 
-    // If user is below top 10, add their entry with separator
+    // Find user's entry
     const userEntry = entries.find(entry => entry.wallet_address === user?.wallet?.address);
+    console.log('Found user entry:', userEntry); // Debug log
+
     if (!userEntry) {
+      console.log('User entry not found in entries array'); // Debug log
       return top10;
     }
 
+    // Return top 10 + separator + user's position
     return [
       ...top10,
       { // Separator entry
@@ -91,7 +106,10 @@ const Leaderboard = () => {
         score: -1,
         xp: -1
       } as LeaderboardEntry,
-      userEntry
+      {
+        ...userEntry,
+        position: userPosition // Store the position for display
+      }
     ];
   };
 
@@ -131,7 +149,7 @@ const Leaderboard = () => {
                     }
 
                     // Use actual position for user entry when below top 10
-                    const displayPosition = userPosition && index >= 10 ? userPosition : index + 1;
+                    const displayPosition = entry.position || index + 1;
 
                     return (
                       <tr 
