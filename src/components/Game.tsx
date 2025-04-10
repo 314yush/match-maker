@@ -668,31 +668,17 @@ const Game = () => {
       frameUrl.searchParams.set('sets', currentSet.toString());
       
       // Create the message with the frame URL
-      const message = `I just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score?`;
-      
-      // Check if user is on mobile
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const message = `🎮 Just scored ${score} points in Crypto Match!\n🏆 Best: ${highestScore}\n⭐ XP: ${stats?.xp || 0}\n🎯 Sets: ${currentSet}\n\nCan you beat my score?`;
       
       // Create the share URL with proper frame embedding
       const encodedMessage = encodeURIComponent(message);
       const encodedFrameUrl = encodeURIComponent(frameUrl.toString());
       
-      if (isMobile) {
-        // For mobile, try both URL schemes with frame URL
-        const warpcastUrl = `warpcast://compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
-        const fallbackUrl = `https://warpcast.com/~/compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
-        
-        // Try opening Warpcast app
-        window.location.href = warpcastUrl;
-        
-        // If Warpcast app is not installed, fallback to web after a short delay
-        setTimeout(() => {
-          window.location.href = fallbackUrl;
-        }, 1000);
-      } else {
-        // For desktop, use the web URL with frame URL
-        window.location.href = `https://warpcast.com/~/compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
-      }
+      // Use the same URL format for both mobile and desktop
+      const shareUrl = `https://warpcast.com/~/compose?text=${encodedMessage}&embeds[]=${encodedFrameUrl}`;
+      
+      // Open in new tab/window
+      window.open(shareUrl, '_blank');
     } catch (error) {
       console.error('Error sharing to Warpcast:', error);
       showMessage('Failed to share score. Please try again.', 'error');
