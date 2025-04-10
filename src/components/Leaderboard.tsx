@@ -68,12 +68,22 @@ const Leaderboard = () => {
   const getDisplayEntries = () => {
     const top10 = entries.slice(0, 10);
     
-    if (!user?.wallet?.address || userPosition === null || userPosition <= 10) {
+    // If no user is logged in or user is in top 10, just show top 10
+    if (!user?.wallet?.address || userPosition === null) {
       return top10;
     }
 
-    // Add a separator and the user's position
-    const userEntry = entries[userPosition - 1];
+    // If user is in top 10, just show top 10
+    if (userPosition <= 10) {
+      return top10;
+    }
+
+    // If user is below top 10, add their entry with separator
+    const userEntry = entries.find(entry => entry.wallet_address === user?.wallet?.address);
+    if (!userEntry) {
+      return top10;
+    }
+
     return [
       ...top10,
       { // Separator entry

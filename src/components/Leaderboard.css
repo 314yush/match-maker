@@ -256,16 +256,28 @@
 .separator-row {
   text-align: center;
   background-color: transparent !important;
+  border-top: 2px dashed #209CEE !important;
+  border-bottom: 2px dashed #209CEE !important;
 }
 
 .separator-cell {
-  padding: 0.5rem !important;
+  padding: 0.75rem !important;
   font-weight: bold;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
+  color: #209CEE;
 }
 
 .current-user-row {
-  background-color: rgba(92, 207, 230, 0.1);
+  background-color: rgba(92, 207, 230, 0.15) !important;
+  border: 2px solid #209CEE !important;
+}
+
+.current-user-row:hover {
+  background-color: rgba(92, 207, 230, 0.25) !important;
+}
+
+.current-user-row td {
+  font-weight: bold;
 }
 
 /* Responsive adjustments */
@@ -285,5 +297,10 @@
 
   .wallet-address {
     font-size: 0.9em;
+  }
+
+  .separator-cell {
+    padding: 0.5rem !important;
+    letter-spacing: 2px;
   }
 } 
